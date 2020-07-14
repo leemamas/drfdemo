@@ -13,4 +13,4 @@ class MyAuthentication(BaseAuthentication):
         if not token_obj:
             raise exceptions.AuthenticationFailed('auth failure!')
 
-        return (token_obj.user.user,None)
+        return (token_obj.user,None)

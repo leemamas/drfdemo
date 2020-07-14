@@ -18,3 +18,8 @@
 * 全局，在setting中,REST_FRAMEWORK={
     'DEFAULT_AUTHENTICATION_CLASSES':['api.utils.auth.MyAuthentication',]
 }
+## 3.rest framework 权限
+* 基于BasePermission，重写has_permission()
+* 返回False没权限，反之即有
+* message重写返回信息
+* 全局DEFAULT_AUTHENTICATION_CLASSES

@@ -5,7 +5,8 @@ from django.views import View
 from django.utils.decorators import method_decorator
 from rest_framework.views import APIView
 from django.http import JsonResponse
-from api.utils import auth
+from api.utils import auth,permissions
+
 
 #django两种视图
 #1.函数视图[function view]FBV
@@ -102,11 +103,22 @@ class AuthView(APIView):
 
 class UserInfoView(APIView):
     # authentication_classes = [auth.MyAuthentication,]
+    # permission_classes = [permissions.MyPermission,]
     def get(self, request, *args, **kwargs):
 
         ret = {
             'code': 200,
             'user':request.user,
             'auth':request.auth
+        }
+        return JsonResponse(ret)
+
+class VipView(APIView):
+    permission_classes = [permissions.MyPermission,]
+    def get(self, request, *args, **kwargs):
+        ret = {
+            'code': 200,
+            'data': 'vip permisions!.'
+
         }
         return JsonResponse(ret)
