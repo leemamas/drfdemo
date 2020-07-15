@@ -136,4 +136,5 @@ REST_FRAMEWORK={
     'DEFAULT_VERSION':'v1',
     'ALLOWED_VERSIONS':['v1','v2'],
     'VERSION_PARAM':'ver',
+    'DEFAULT_PARSER_CLASSES':['rest_framework.parsers.JSONParser','rest_framework.parsers.FormParser']
 }

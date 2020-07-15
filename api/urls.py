@@ -13,4 +13,5 @@ urlpatterns = [
     path('vip/', views.VipView.as_view()),
     path('version/', views.VersionView.as_view()),
     re_path('(?P<ver>[v1|v2|v3]+)/version2/', views.VersionView2.as_view(),name='ver'),
+    path('parse/', views.TestParserView.as_view()),
 ]

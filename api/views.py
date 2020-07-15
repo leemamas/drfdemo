@@ -151,3 +151,14 @@ class VersionView2(APIView):
         print(url)
 
         return HttpResponse('test version')
+
+from rest_framework.parsers import JSONParser,FormParser
+class TestParserView(APIView):
+    # parser_classes = [JSONParser,FormParser]
+    def post(self, request, *args, **kwargs):
+
+        data=request.data
+
+        print(data)
+
+        return HttpResponse('test parse!')

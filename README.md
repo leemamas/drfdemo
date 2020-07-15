@@ -64,3 +64,67 @@
 * re_path('(?P<ver>[v1|v2|v3]+)/version2/', views.VersionView2.as_view(),name='ver')
 * 反转版本api的url
 * url=request.versioning_scheme.reverse(viewname='ver',request=request)
+## 解析器
+
+
+> 了解基础知识：request.POST/request.body 
+
+* request.POST要取得值，必须 
+
+1.请求头：Content-Type：application/x-www-form-urlencoded
+
+2.数据格式: 如name=tom&age=18
+1. form表单提交
+```html
+<from method='post' action=''>
+	user:<input type='text' name='user>
+	pwd:<input type='text' name='pwd>
+</form>
+<!--内部默认转为user=xx&pwd=xxx的数据格式-->
+```
+2. ajax提交
+```javascript
+$.ajax({
+			uri:xxx,
+			type:POST,
+			data:{
+				'name':'tom',
+				'age':18
+			}
+		})
+		##内部默认转为name=tom&age=18的数据格式
+		$.ajax({
+			uri:xxx,
+			type:POST,
+			headers:{
+				'Content-Type'：'application/json'
+			}
+			data:{
+				'name':'tom',
+				'age':18
+			}
+		})
+		$.ajax({
+			uri:xxx,
+			type:POST,
+			headers:{
+				'Content-Type'：'application/json'
+			}
+			data:JSON.stringfy({
+				'name':'tom',
+				'age':18
+			})
+		})
+		##最后2种，body有值，POST没有
+		##可以通过json.loads(request.body)取值
+```
+* rest framework解析器，对请求体数据进行解析
+> 代码流程:
+- dispatch-->initialize_request-->Request类得到get_parsers所以的parser_classes的对象
+- request.data-->._load_data_and_files()-->_parse()
+- 通过negotiator.select_parser(self, self.parsers)比较请求对象self.content_type和parser_classes=[]的对象得到parse
+- 最后通过parse()得到请求体的数据
+> 全局配置使用
+* 'DEFAULT_PARSER_CLASSES':['rest_framework.parsers.JSONParser','rest_framework.parsers.FormParser']
+
+* request.data
