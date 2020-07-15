@@ -6,6 +6,7 @@ from django.utils.decorators import method_decorator
 from rest_framework.views import APIView
 from django.http import JsonResponse
 from api.utils import auth,permissions
+from rest_framework.throttling import BaseThrottle
 
 
 #django两种视图
@@ -114,7 +115,10 @@ class UserInfoView(APIView):
         return JsonResponse(ret)
 
 class VipView(APIView):
+
     permission_classes = [permissions.MyPermission,]
+    throttle_scope='vip'
+
     def get(self, request, *args, **kwargs):
         ret = {
             'code': 200,

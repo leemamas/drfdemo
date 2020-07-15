@@ -23,3 +23,9 @@
 * 返回False没权限，反之即有
 * message重写返回信息
 * 全局DEFAULT_AUTHENTICATION_CLASSES
+
+## 4.控制访问频率（节流）
+* 使用DEFAULT_THROTTLE_CLASSES和DEFAULT_THROTTLE_RATES设置全局设置默认的限制策略
+* DEFAULT_THROTTLE_CLASSES:创建自定义节流阀，请覆盖BaseThrottle并实施.allow_request(self, request, view),重写.wait()方法,返回建议的秒数
+* DEFAULT_THROTTLE_RATES：在自定义的节流阀中，通过scope设置作用域，.get_cache_key(self, request, view)重写，对缓存定义作为key，返回通过什么代理进行节流
+* DEFAULT_THROTTLE_RATES用到second，minute，hour或day作为节流段，如‘10/m' ,'500/d'等等
