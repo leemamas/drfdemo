@@ -126,3 +126,28 @@ class VipView(APIView):
 
         }
         return JsonResponse(ret)
+
+
+from api.utils.version import MyVersion
+from rest_framework.versioning import QueryParameterVersioning,URLPathVersioning
+class VersionView(APIView):
+    authentication_classes = []
+    throttle_classes = []
+    versioning_class = QueryParameterVersioning
+    def get(self, request, *args, **kwargs):
+        version=request.version
+        scheme=request.versioning_scheme
+        print(version)
+        print(scheme)
+
+        return HttpResponse('test version')
+
+class VersionView2(APIView):
+    authentication_classes = []
+    throttle_classes = []
+    versioning_class = URLPathVersioning
+    def get(self, request, *args, **kwargs):
+        url=request.versioning_scheme.reverse(viewname='ver',request=request)
+        print(url)
+
+        return HttpResponse('test version')

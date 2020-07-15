@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'api.apps.ApiConfig',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -125,11 +126,14 @@ REST_FRAMEWORK={
     'DEFAULT_AUTHENTICATION_CLASSES':['api.utils.auth.MyAuthentication',],
     'DEFAULT_THROTTLE_CLASSES': [
         'api.utils.throttle.SimpleVisitThrottle',
-        'api.utils.throttle.VisitThrottle',
+        'api.utils.throttle.VipVisitThrottle',
     ],
     'DEFAULT_THROTTLE_RATES': {
         'simple': '2/m',
         'vip': '5/m',
         'svip':'10/m',
-    }
+    },
+    'DEFAULT_VERSION':'v1',
+    'ALLOWED_VERSIONS':['v1','v2'],
+    'VERSION_PARAM':'ver',
 }
