@@ -168,3 +168,125 @@ roles=serializers.SerializerMethodField()
         return ret
 
 ```
+> 序列化器的使用
+* 服务器响应时，对数据的序列化
+
+```python3
+##序列化器
+class UserSerializer(serializers.Serializer):
+
+    user=serializers.CharField()
+    pwd=serializers.CharField()
+    # type=serializers.CharField(source='user_type') #row.user_type
+    level=serializers.CharField(source='get_user_type_display')
+    group=serializers.CharField(source='group.title')
+    # roles=serializers.CharField(source='roles.all')
+    roles=serializers.SerializerMethodField()
+    def get_roles(self,row):
+        roles_obj=row.roles.all()
+        ret=[]
+        for item in roles_obj:
+            ret.append({'id':item.id,'title':item.title})
+        return ret
+class UserView(APIView):
+
+    def get(self, request, *args, **kwargs):
+        #查出对象
+        users_obj=models.User.objects.all()
+        #构造序列化器对象
+        ser=serializers.UserSerializer(instance=users_obj,many=True)
+        #获取数据
+        ret=json.dumps(ser.data, ensure_ascii=False)
+
+        return HttpResponse(ret)
+```
+* 客户端请求时，对数据的反序列化
+```python
+class UserSerializer2(serializers.Serializer):
+
+    user=serializers.CharField(required=True, min_length=8)
+    pwd=serializers.CharField(required=True, min_length=8)
+    user_type=serializers.IntegerField(default=1)
+    group_obj=models.UserGroup.objects.first()
+    group=serializers.IntegerField(default=group_obj)
+
+    def create(self, validated_data):  # validated_data 参数,在序列化器调用时,会自动传递验证完成以后的数据
+        user = models.User.objects.create(
+            user=self.validated_data.get("user"),
+            pwd=self.validated_data.get("pwd"),
+            user_type=self.validated_data.get("user_type"),
+            group=self.validated_data.get("group")
+        )
+
+        return user
+
+    def update(self, instance, validated_data):
+        instance.user = validated_data.get("user")
+        instance.pwd = validated_data.get("pwd")
+        instance.user_type = validated_data.get("user_type")
+
+        # 调用模型的save更新保存数据
+        instance.save()
+        return instance
+##############################################
+ def post(self,request,*args,**kwargs):
+
+        data = request.data
+        print(data)
+        ser = serializers.UserSerializer2(data=data)
+
+        ser.is_valid(raise_exception=True)
+        # print(ser.validated_data)
+        # print(ser.errors)
+        ser.save()
+        return HttpResponse('ok')
+
+    def put(self,request,*args,**kwargs):
+        data = request.data
+        user_obj= models.User.objects.get(pk=data.get("id"))
+        print(data)
+        print(user_obj)
+        ser = serializers.UserSerializer2(instance=user_obj,data=data)
+        ser.is_valid(raise_exception=True)
+        ser.save()
+        return HttpResponse('ok')
+
+```
+> is_valid()方法,验证失败时抛出异常serializers.ValidationError
+
+> raise_exception=True参数开启
+
+> 定义验证行为(3z种)
+- 局部钩子validate_字段名 （单个字段）
+```python
+    def validate_user(self, data):
+        if (data == "fuck"):
+            raise serializers.ValidationError("用户名不能是禁止文字")
+        # 验证完成以后务必要返回字段值
+        return data
+```
+- 全局钩子validate（用于验证多个字段）
+```python
+   def validate(self, data):
+        user = data.get("user")
+        if (user == "fuck"):
+            raise serializers.ValidationError("用户名不能是禁止文字")
+
+        pwd = data.get("pwd")
+        if (len(pwd) > 64):
+            raise serializers.ValidationError("密码过长")
+
+        return data
+```
+- 添加validators选项参数 
+```python
+
+def check_user(user):
+    if user=='kao':
+        raise serializers.ValidationError("用户名不能是禁止文字")
+    return user
+
+class UserSerializer2(serializers.Serializer):
+
+    user=serializers.CharField(required=True, min_length=8,validators=[check_user])
+```
