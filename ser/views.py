@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from . import models
 import json
 from .utils import serializers
+from django.http import JsonResponse
 
 class RoleView(APIView):
 
@@ -57,3 +58,28 @@ class UserView(APIView):
         ser.save()
         return HttpResponse('ok')
 
+class UserView2(APIView):
+    def get(self, request, *args, **kwargs):
+        data=request.data
+        users_obj = models.User.objects.all()
+        ser=serializers.UserModelSerializer(instance=users_obj,many=True)
+        ret = json.dumps(ser.data, ensure_ascii=False)
+
+        return HttpResponse(ret)
+
+    def post(self,request,*args,**kwargs):
+
+        data = request.data
+        ser = serializers.UserModelSerializer(data=data)
+        ser.is_valid(raise_exception=True)
+
+        ser.save()
+        return HttpResponse('ok')
+
+    def put(self, request, *args, **kwargs):
+        data = request.data
+        user_obj = models.User.objects.get(pk=data.get("id"))
+        ser = serializers.UserModelSerializer(instance=user_obj, data=data)
+        ser.is_valid(raise_exception=True)
+        ser.save()
+        return HttpResponse('ok')

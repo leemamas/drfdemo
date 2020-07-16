@@ -290,3 +290,30 @@ class UserSerializer2(serializers.Serializer):
 
     user=serializers.CharField(required=True, min_length=8,validators=[check_user])
 ```
+> 模型类序列化器 ModelSerializer
+- 自动生成一系列字段
+- 基于模型类自动为Serializer生成validators，比如unique_together
+- 包含默认的create()和update()的实现
+```python
+from rest_framework.serializers import ModelSerializer
+class UserModelSerializer(ModelSerializer):
+    class Meta:
+        #model 指明参照哪个模型类
+        model = models.User
+        #fields 指明为模型类的哪些字段生成
+        fields='__all__'
+```
+* fields指定字段， __all__所有字段，也可以写明具体哪些字段
+```python
+ fields = ['id', 'user', 'pwd']
+```
+* exclude 排除字段
+```python
+exclude=['user_type']
+```
+* read_only_fields只读字段
+
+* 深度控制,列出链表关系
+```python
+depth=1
+```

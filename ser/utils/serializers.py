@@ -82,3 +82,12 @@ class UserSerializer2(serializers.Serializer):
         # 调用模型的save更新保存数据
         instance.save()
         return instance
+
+from rest_framework.serializers import ModelSerializer
+class UserModelSerializer(ModelSerializer):
+    class Meta:
+        model = models.User
+        fields='__all__'
+        fields = ['id', 'user', 'pwd','user_type','group','roles']
+        # exclude=['user_type']
+        depth=1
