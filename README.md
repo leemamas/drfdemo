@@ -64,7 +64,7 @@
 * re_path('(?P<ver>[v1|v2|v3]+)/version2/', views.VersionView2.as_view(),name='ver')
 * 反转版本api的url
 * url=request.versioning_scheme.reverse(viewname='ver',request=request)
-## 解析器
+## 6.解析器
 
 
 > 了解基础知识：request.POST/request.body 
@@ -128,3 +128,5 @@ $.ajax({
 * 'DEFAULT_PARSER_CLASSES':['rest_framework.parsers.JSONParser','rest_framework.parsers.FormParser']
 
 * request.data
+
+## 7.序列化
