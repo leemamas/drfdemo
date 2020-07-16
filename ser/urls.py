@@ -8,4 +8,5 @@ from django.urls import path
 
 urlpatterns = [
     path('roles/',views.RoleView.as_view()),
+    path('users/',views.UserView.as_view()),
 ]

@@ -130,3 +130,41 @@ $.ajax({
 * request.data
 
 ## 7.序列化
+> 基本使用
+- 声明序列化器
+```python
+from rest_framework import serializers
+
+class RoleSerializer(serializers.Serializer):
+    title = serializers.CharField()
+
+```
+- 序列化对象
+```python
+serializer=RoleSerializer(instance=role_obj, many=False) #many=True 表示查询多个
+serializer.data     #模型实例-->数据类型
+```
+> 自定义字段
+- 单选下拉 
+```python
+user_type=models.IntegerField(choices=user_type_choices)
+level=serializers.CharField(source='get_user_type_display')
+```
+- 外键
+```python
+group=models.ForeignKey('UserGroup',on_delete=models.CASCADE)
+group=serializers.CharField(source='group.title')
+```
+
+- 多对多
+```python
+roles=models.ManyToManyField('Role')
+roles=serializers.SerializerMethodField()
+    def get_roles(self,row):
+        roles_obj=row.roles.all()
+        ret=[]
+        for item in roles_obj:
+            ret.append({'id':item.id,'title':item.title})
+        return ret
+
+```

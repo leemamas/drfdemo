@@ -22,5 +22,15 @@ class RoleView(APIView):
         role_obj = models.Role.objects.all().first()
         ser = serializers.RoleSerializer(instance=role_obj, many=False)
         ret = json.dumps(ser.data, ensure_ascii=False)
+        return HttpResponse(ret)
+
+class UserView(APIView):
+
+    def get(self, request, *args, **kwargs):
+
+        users_obj=models.User.objects.all()
+        print(users_obj)
+        ser=serializers.UserSerializer(instance=users_obj,many=True)
+        ret=json.dumps(ser.data, ensure_ascii=False)
 
         return HttpResponse(ret)
