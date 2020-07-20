@@ -39,14 +39,16 @@ class PublishView(APIView):
         ser.save()
         return HttpResponse('1111')
 
-
+from example.utils import paginator as pg
 class BookView(APIView):
+
     def get(self, request, *args, **kwargs):
         pk = kwargs.get('pk')
         if pk:
             try:
-                book_obj = models.BookModel.objects.get(pk=pk)
-                book_data = serializer.BookModelSerializer(book_obj).data
+                book_query = models.BookModel.objects.get(pk=pk)
+                many=False
+
             except:
                 return Response({
                     'status': 1,
@@ -54,12 +56,24 @@ class BookView(APIView):
                 })
         else:
             book_query = models.BookModel.objects.all()
-            book_data = serializer.BookModelSerializer(book_query, many=True).data
-        return Response({
-            'status': 0,
-            'msg': 'ok',
-            'results': book_data
-        })
+            many=True
+
+        # 分页
+        # paginator=pg.MyPagination1()   #page=2&size=3
+
+        # paginator=pg.MyPagination2()    #?limit=3&offset=1
+
+        paginator = pg.MyPagination3()
+        book_page_obj = paginator.paginate_queryset(book_query, request=request, view=self)
+
+        book_data = serializer.BookModelSerializer(book_page_obj, many=True).data
+        # return Response({
+        #     'status': 0,
+        #     'msg': 'ok',
+        #     'results': book_data
+        # })
+
+        return paginator.get_paginated_response(book_data)
 
     def post(self, request, *args, **kwargs):
         request_data = request.data

@@ -317,3 +317,14 @@ exclude=['user_type']
 ```python
 depth=1
 ```
+
+## 8.分页
+- PageNumberPagination
+- LimitOffsetPagination
+- CursorPagination
+> 使用
+* 取的分页类的对象
+* 通过.paginate_queryset(query_obj, request=request, view=self)方法，对查询出来的object作分页处理
+> 其他方法
+* paginator.get_paginated_response(data)
+
