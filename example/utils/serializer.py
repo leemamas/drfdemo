@@ -38,3 +38,8 @@ class BookModelSerializer(serializers.ModelSerializer):
             'publish': {'write_only': True},
             'authors': {'write_only': True},
         }
+
+class AuthorModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.AuthorModel
+        fields = '__all__'

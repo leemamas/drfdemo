@@ -328,3 +328,65 @@ depth=1
 > 其他方法
 * paginator.get_paginated_response(data)
 
+## 9.视图
+- View-->ApiView-->GenericAPIView
+```python
+##path('authors/',views.AuthorView.as_view())
+from rest_framework.generics import GenericAPIView
+class AuthorView(GenericAPIView):
+    queryset =models.AuthorModel.objects.all()
+    serializer_class = serializer.AuthorModelSerializer
+    pagination_class = pg.MyPagination3
+
+    def get(self, request, *args, **kwargs):
+        authors=self.get_queryset()
+        authors_page=self.paginate_queryset(authors)
+        ser=self.get_serializer(authors_page,many=True)
+        return Response(ser.data)
+```
+- GenericViewSet
+```python
+##path('authors2/',views.AuthorView2.as_view({'get':'list'}))
+from rest_framework.viewsets import GenericViewSet
+class AuthorView2(GenericViewSet):
+    queryset = models.AuthorModel.objects.all()
+    serializer_class = serializer.AuthorModelSerializer
+    pagination_class = pg.MyPagination3
+
+    def list(self, request, *args, **kwargs):
+        authors = self.get_queryset()
+        authors_page = self.paginate_queryset(authors)
+        ser = self.get_serializer(authors_page, many=True)
+        return Response(ser.data)
+```
+- ModelViewSet(mixins.CreateModelMixin,
+                   mixins.RetrieveModelMixin,
+                   mixins.UpdateModelMixin,
+                   mixins.DestroyModelMixin,
+                   mixins.ListModelMixin,
+                   GenericViewSet)
+```python
+##re_path('^authors3/$',views.AuthorView3.as_view({'get': 'list','post':'create'})),
+##re_path('^authors3/(?P<pk>\d+)/$',views.AuthorView3.as_view({'get': 'retrieve','put':'update','delete':'destroy','patch':'partial_update'})),
+from rest_framework.viewsets import ModelViewSet
+class AuthorView3(ModelViewSet):
+    queryset = models.AuthorModel.objects.all()
+    serializer_class = serializer.AuthorModelSerializer
+    pagination_class = pg.MyPagination3
+```
+
+## 10.路由
+```python
+from rest_framework import routers
+
+router=routers.DefaultRouter()
+router.register('authors3',views.AuthorView3)
+urlpatterns=[
+        # re_path('^books/$',views.BookView.as_view({'get': 'list','post':'create'})),
+        # re_path('^books/(?P<pk>\d+)/$',views.BookView.as_view({'get': 'retrieve','put':'update','delete':'destroy','patch':'partial_update'})),
+        ##直接自动生成
+        path('',include(router.urls))
+]
+#urlpatterns+=router.urls （一样效果）
+```
+

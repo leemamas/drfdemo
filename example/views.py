@@ -111,3 +111,33 @@ class BookView(APIView):
             'status': 1,
             'msg': '删除失败',
         })
+
+from rest_framework.generics import GenericAPIView
+class AuthorView(GenericAPIView):
+    queryset =models.AuthorModel.objects.all()
+    serializer_class = serializer.AuthorModelSerializer
+    pagination_class = pg.MyPagination3
+
+    def get(self, request, *args, **kwargs):
+        authors=self.get_queryset()
+        authors_page=self.paginate_queryset(authors)
+        ser=self.get_serializer(authors_page,many=True)
+        return Response(ser.data)
+
+from rest_framework.viewsets import GenericViewSet
+class AuthorView2(GenericViewSet):
+    queryset = models.AuthorModel.objects.all()
+    serializer_class = serializer.AuthorModelSerializer
+    pagination_class = pg.MyPagination3
+
+    def list(self, request, *args, **kwargs):
+        authors = self.get_queryset()
+        authors_page = self.paginate_queryset(authors)
+        ser = self.get_serializer(authors_page, many=True)
+        return Response(ser.data)
+
+from rest_framework.viewsets import ModelViewSet
+class AuthorView3(ModelViewSet):
+    queryset = models.AuthorModel.objects.all()
+    serializer_class = serializer.AuthorModelSerializer
+    pagination_class = pg.MyPagination3
