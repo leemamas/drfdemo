@@ -390,3 +390,12 @@ urlpatterns=[
 #urlpatterns+=router.urls （一样效果）
 ```
 
+## 11.渲染器
+
+```python
+from rest_framework.renderers import JSONRenderer,HTMLFormRenderer
+class TestView(APIView):
+    renderer_classes = [JSONRenderer,HTMLFormRenderer]
+    def get(self,request):
+        return HttpResponse('xxxxx')
+```

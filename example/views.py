@@ -141,3 +141,9 @@ class AuthorView3(ModelViewSet):
     queryset = models.AuthorModel.objects.all()
     serializer_class = serializer.AuthorModelSerializer
     pagination_class = pg.MyPagination3
+
+from rest_framework.renderers import JSONRenderer,HTMLFormRenderer
+class TestView(APIView):
+    renderer_classes = [JSONRenderer,HTMLFormRenderer]
+    def get(self,request):
+        return HttpResponse('xxxxx')
